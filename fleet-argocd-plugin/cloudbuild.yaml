@@ -12,13 +12,14 @@
 steps:
   # Docker Build
   - name: 'gcr.io/cloud-builders/docker'
-    args: ['build', '-t',
-    '$LOCATION-docker.pkg.dev/$PROJECT_ID/argocd-fleet-sync/plugin:v1.0', '.']
-
-  # Docker push to Google Artifact Registry
-  - name: 'gcr.io/cloud-builders/docker'
-    args: ['push', '$LOCATION-docker.pkg.dev/$PROJECT_ID/argocd-fleet-sync/plugin:v1.0']
+    dir: 'fleet-argocd-plugin'
+    entrypoint: /bin/sh
+    args:
+      - -c
+      - |
+        docker build -t $LOCATION-docker.pkg.dev/$PROJECT_ID/argocd-fleet-sync/plugin:v1.0 .
 
 # Store images in Google Artifact Registry
 images:
   - $LOCATION-docker.pkg.dev/$PROJECT_ID/argocd-fleet-sync/plugin:v1.0
+logsBucket: 'gs://${PROJECT_ID}-cloudbuild-logs'
